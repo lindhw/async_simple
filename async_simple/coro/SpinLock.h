@@ -49,7 +49,11 @@ public:
         while (!tryLock()) {
             while (_locked.load(std::memory_order_relaxed)) {
                 if (counter-- <= 0) {
-                    std::this_thread::yield();
+                    //  是将当前线程所抢到的CPU”时间片A”让渡给其他线程
+                    // (其他线程会争抢”时间片A”, 注意: 此时”当前线程”不参与争抢).
+                    // 等到其他线程使用完”时间片A”后, 
+                    // 再由操作系统调度, 当前线程再和其他线程一起开始抢CPU时间片.
+                    std::this_thread::yield(); 
                     counter = _spinCount;
                 }
             }
@@ -64,6 +68,8 @@ public:
     }
 
 private:
+    // use spin count to avoid current coroutine occupy current thread too long, 
+    // and starve the other coroutines.
     std::int32_t _spinCount;
     std::atomic<bool> _locked;
 };
