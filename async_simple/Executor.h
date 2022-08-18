@@ -132,6 +132,14 @@ private:
     std::string _name;
 };
 
+
+// Awaitable & Awaiter 区别
+// 一个Awaiter类型是一个实现了3个特殊方法的类型，这3个方法作为`co_await`表达式的一部分被调用：`await_ready`、`await_suspend`和`await_resume`。
+// 一个支持`co_await`运算符的类型被称为Awaitable类型。
+// 注意，`co_await`运算符能否应用于一个类型，取决于`co_await`表达式出现的上下文。
+// 一个协程的promise类型可以修改协程内`co_await`表达式的含义，通过promise类型的`await_transform`方法
+
+
 // Awaiter to implement Executor::after.
 class Executor::TimeAwaiter {
 public:
